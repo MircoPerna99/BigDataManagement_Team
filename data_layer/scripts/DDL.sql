@@ -3,8 +3,8 @@ CREATE TABLE allergies ( -- possibile problema nei dati manca l'id come guid
 	stop DATE,
 	patient	 CHAR(36) NOT NULL, -- probabilmente FK
 	encounter CHAR(36) NOT NULL,-- probabilmente FK
-	code INT NOT NULL, -- probabilmente PK
-	system	VARCHAR(100) NOT NULL,
+	code BIGINT NOT NULL, -- probabilmente PK
+	`system` VARCHAR(100) NOT NULL,
 	description	VARCHAR(100) NOT NULL,
 	type VARCHAR(100) NOT NULL,
 	category VARCHAR(100) NOT NULL,
@@ -13,8 +13,10 @@ CREATE TABLE allergies ( -- possibile problema nei dati manca l'id come guid
 	severity1	VARCHAR(20),
 	reaction2	INT,	
 	description2 VARCHAR(100),
-	severity2 VARCHAR(20),
+	severity2 VARCHAR(20)
 );
+
+
 
 CREATE TABLE careplans(
 	id CHAR(36) NOT NULL PRIMARY KEY,
@@ -22,14 +24,14 @@ CREATE TABLE careplans(
 	stop DATE,
 	patient	 CHAR(36) NOT NULL, -- probabilmente FK
 	encounter CHAR(36) NOT NULL,-- probabilmente FK
-	code INT NOT NULL, -- probabilmente PK
+	code BIGINT NOT NULL, -- probabilmente PK
 	description VARCHAR(100),	
 	reasoncode	INT,
 	reasondescription VARCHAR(100)
 );
 
 CREATE TABLE claimsTransaction(
-	id CHAR(36) NOT NULL PRIMARY KEY,
+	id CHAR(36) NOT NULL,
 	claimid CHAR(36) NOT NULL,
 	chargeid INT NOT NULL,
 	patientid CHAR(36) NOT NULL,
@@ -39,7 +41,7 @@ CREATE TABLE claimsTransaction(
 	fromdate DATE NOT NULL,
 	todate	 DATE NOT NULL,
 	placeofservice	CHAR(36) NOT NULL,
-	procedurecode	INT NOT NULL,
+	procedurecode	BIGINT NOT NULL,
 	modifier1	VARCHAR(100),
 	modifier2	VARCHAR(100),
 	diagnosisref1 INT NOT NULL, -- I valori sono o vuoiti o uguali a al numero finale
@@ -48,9 +50,9 @@ CREATE TABLE claimsTransaction(
 	diagnosisref4 INT,-- I valori sono o vuoiti o uguali a al numero finale
 	units	INT NOT NULL, -- Valori tutti uguali a uno
 	departmentid INT NOT NULL,
-	notes	VARCHAR(100) NOT NULL,
+	notes	TEXT NOT NULL,
 	unitamount	DECIMAL(10, 2),
-	transferoutid	INT NOT NULL,
+	transferoutid	INT,
 	transfertype	CHAR(1),
 	payments	DECIMAL(10, 2),
 	adjustments VARCHAR(20),
@@ -72,14 +74,14 @@ CREATE TABLE claims(
 	secondarypatientinsuranceid	VARCHAR(36) NOT NULL,-- VARCHAR perché alcuni sono uguali a 0
 	departmentid INT NOT NULL,
 	patientdepartmentid	INT NOT NULL,
-	diagnosis1	INT NOT NULL,
-	diagnosis2	INT,
-	diagnosis3	INT,
-	diagnosis4	INT,
-	diagnosis5	INT,
-	diagnosis6	INT,
-	diagnosis7	INT,
-	diagnosis8	INT,
+	diagnosis1	BIGINT NOT NULL,
+	diagnosis2	BIGINT,
+	diagnosis3	BIGINT,
+	diagnosis4	BIGINT,
+	diagnosis5	BIGINT,
+	diagnosis6	BIGINT,
+	diagnosis7	BIGINT,
+	diagnosis8	BIGINT,
 	referringproviderid	INT, -- valori tutti nulli da dare un'occhiata
 	appointmentid	CHAR(36) NOT NULL, -- possibile FK
 	currentillnessdate	DATE NOT NULL,
@@ -103,7 +105,7 @@ CREATE TABLE conditions(
 	stop DATE,	
 	patient	CHAR(36) NOT NULL,
 	encounter CHAR(36) NOT NULL,
-	code INT NOT NULL,	
+	code BIGINT NOT NULL,	
 	description VARCHAR(100) NOT NULL
 );
 
@@ -170,7 +172,7 @@ CREATE TABLE medications(
 	encounter	CHAR(36) NOT NULL,
 	code	INT NOT NULL,	
 	description	VARCHAR(100) NOT NULL,
-	base_cost	DECIMAL(10, 2) NOT NULL
+	base_cost	DECIMAL(10, 2) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
 	dispenses	INT NOT NULL,
 	totalcost	DECIMAL(10, 2) NOT NULL,
@@ -229,7 +231,7 @@ CREATE TABLE patients (
 	lat	DECIMAL(22, 20) NOT NULL,
 	lon	DECIMAL(22, 20) NOT NULL,
 	healthcare_expenses	DECIMAL(30, 20) NOT NULL,
-	healthcare_coverage DECIMAL(30, 20) NOT NULL,
+	healthcare_coverage DECIMAL(30, 20) NOT NULL
 );
 
 CREATE TABLE payer_transitions(
@@ -277,7 +279,7 @@ CREATE TABLE procedures(
 	description	VARCHAR(100),
 	base_cost	DECIMAL(10, 2) NOT NULL,
 	reasoncode	INT,
-	reasondescription VARCHAR(100),
+	reasondescription VARCHAR(100)
 );
 
 CREATE TABLE providers(
@@ -296,10 +298,10 @@ CREATE TABLE providers(
 );
 
 CREATE TABLE supplies(
-date	DATE NOT NULL,
-patient	CHAR(36) NOT NULL,
-encounter	CHAR(36) NOT NULL,
-code	INT NOT NULL,
-description	VARCHAR(100) NOT NULL,
-quantity INT NOT NULL
+	date	DATE NOT NULL,
+	patient	CHAR(36) NOT NULL,
+	encounter	CHAR(36) NOT NULL,
+	code	INT NOT NULL,
+	description	VARCHAR(100) NOT NULL,
+	quantity INT NOT NULL
 );
