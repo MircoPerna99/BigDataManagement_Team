@@ -134,12 +134,12 @@ CREATE TABLE encounters(
 	base_encounter_cost	DECIMAL(10, 2) NOT NULL,
 	total_claim_cost	DECIMAL(10, 2) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
-	reasoncode	INT,
+	reasoncode	BIGINT,
 	reasondescription VARCHAR(100)
 );
 
 CREATE TABLE imaging_studies(
-	id	CHAR(36) NOT NULL PRIMARY KEY,
+	id	CHAR(36), -- VALORI DUPLICATI ID
 	date DATE NOT NULL,
 	patient	CHAR(36) NOT NULL,
 	encounter	CHAR(36) NOT NULL,
@@ -151,7 +151,7 @@ CREATE TABLE imaging_studies(
 	instance_uid VARCHAR(50) NOT NULL,
 	sop_code VARCHAR(50) NOT NULL,	
 	sop_description	VARCHAR(100) NOT NULL,	
-	procedure_code INT NOT NULL
+	procedure_code BIGINT NOT NULL
 );
 
 CREATE TABLE immunizations(
@@ -159,7 +159,7 @@ CREATE TABLE immunizations(
 	patient	CHAR(36) NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	code	INT NOT NULL, -- probabilmente PK
-	description	VARCHAR(50) NOT NULL,
+	description	 TEXT NOT NULL,
 	base_cost	DECIMAL(10, 2) NOT NULL
 );
 
@@ -171,13 +171,13 @@ CREATE TABLE medications(
 	payer	CHAR(36) NOT NULL,
 	encounter	CHAR(36) NOT NULL,
 	code	INT NOT NULL,	
-	description	VARCHAR(100) NOT NULL,
+	description	TEXT NOT NULL,
 	base_cost	DECIMAL(10, 2) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
 	dispenses	INT NOT NULL,
 	totalcost	DECIMAL(10, 2) NOT NULL,
-	reasoncode	INT,
-	reasondescription VARCHAR(50)
+	reasoncode	BIGINT,
+	reasondescription TEXT
 );
 
 CREATE TABLE observations(
@@ -186,8 +186,8 @@ CREATE TABLE observations(
 	encounter CHAR(36),
 	category VARCHAR(50),
 	code	VARCHAR(50),
-	description	VARCHAR(100) NOT NULL,
-	value	VARCHAR(100) NOT NULL,
+	description	BLOB NOT NULL,
+	value	TEXT NOT NULL,
 	units	VARCHAR(50),
 	type  VARCHAR(10)
 );
@@ -222,7 +222,7 @@ CREATE TABLE patients (
 	race	VARCHAR(15) NOT NULL,
 	ethnicity	VARCHAR(15) NOT NULL,
 	gender	VARCHAR(1) NOT NULL,
-	birthplace	VARCHAR(50) NOT NULL,
+	birthplace	VARCHAR(100) NOT NULL,
 	address	VARCHAR(50) NOT NULL,
 	city	VARCHAR(50) NOT NULL,
 	state	VARCHAR(50) NOT NULL,
@@ -253,9 +253,9 @@ CREATE TABLE payers(
 	state_headquartered	CHAR(2),
 	zip	INT,
 	phone	VARCHAR(20),
-	amount_covered	DECIMAL(10, 2) NOT NULL,
-	amount_uncovered DECIMAL(10, 2) NOT NULL,	
-	revenue	DECIMAL(10, 2) NOT NULL,
+	amount_covered	DECIMAL(20, 2) NOT NULL,
+	amount_uncovered DECIMAL(20, 2) NOT NULL,	
+	revenue	DECIMAL(20, 2) NOT NULL,
 	covered_encounters	INT NOT NULL,
 	uncovered_encounters	INT NOT NULL,
 	covered_medications	INT NOT NULL,
@@ -275,8 +275,8 @@ CREATE TABLE procedures(
 	stop	DATE NOT NULL,
 	patient	CHAR(36) NOT NULL,
 	encounter	CHAR(36) NOT NULL,
-	code	INT NOT NULL,
-	description	VARCHAR(100),
+	code	BIGINT NOT NULL,
+	description	TEXT,
 	base_cost	DECIMAL(10, 2) NOT NULL,
 	reasoncode	INT,
 	reasondescription VARCHAR(100)
