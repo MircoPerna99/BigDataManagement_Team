@@ -1,3 +1,6 @@
+--Primary key code patient e code, codice si riferisce all'allergia. 
+--Se cerchi per code ottieni tutti i soggetti con quell'allergia
+--La tabella va divisa in due
 CREATE TABLE allergies ( -- possibile problema nei dati manca l'id come guid
 	start DATE NOT NULL,
 	stop DATE,
@@ -27,7 +30,8 @@ CREATE TABLE careplans(
 	code BIGINT NOT NULL, -- probabilmente PK
 	description VARCHAR(100),	
 	reasoncode	INT,
-	reasondescription VARCHAR(100)
+	reasondescription VARCHAR(100),
+	PRIMARY KEY(id)
 );
 
 CREATE TABLE claimsTransaction(
@@ -63,7 +67,8 @@ CREATE TABLE claimsTransaction(
 	patientinsuranceid	CHAR(36), -- probabilmente FK
 	feescheduleid INT NOT NULL,
 	providerid	CHAR(36) NOT NULL, -- probabilmente FK
-	supervisingproviderid CHAR(36) NOT NULL -- probabilmente FK
+	supervisingproviderid CHAR(36) NOT NULL, -- probabilmente FK
+	PRIMARY KEY(id)
 );
 
 CREATE TABLE claims(
@@ -97,7 +102,8 @@ CREATE TABLE claims(
 	lastbilleddate2	DATE ,
 	lastbilleddatep	DATE NOT NULL,
 	healthcareclaimtypeid1	INT NOT NULL,
-	healthcareclaimtypeid2 INT NOT NULL 
+	healthcareclaimtypeid2 INT NOT NULL,
+	PRIMARY KEY(id)
 );
 
 CREATE TABLE conditions(
@@ -151,7 +157,8 @@ CREATE TABLE imaging_studies(
 	instance_uid VARCHAR(50) NOT NULL,
 	sop_code VARCHAR(50) NOT NULL,	
 	sop_description	VARCHAR(100) NOT NULL,	
-	procedure_code BIGINT NOT NULL
+	procedure_code BIGINT NOT NULL,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE immunizations(
@@ -203,7 +210,8 @@ CREATE TABLE organizations(
 	lon	DECIMAL(22, 20) NOT NULL,
 	phone	VARCHAR(50),
 	revenue	DECIMAL(2, 1) NOT NULL,
-	utilization INT NOT NULL
+	utilization INT NOT NULL,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE patients (
@@ -231,7 +239,8 @@ CREATE TABLE patients (
 	lat	DECIMAL(22, 20) NOT NULL,
 	lon	DECIMAL(22, 20) NOT NULL,
 	healthcare_expenses	DECIMAL(30, 20) NOT NULL,
-	healthcare_coverage DECIMAL(30, 20) NOT NULL
+	healthcare_coverage DECIMAL(30, 20) NOT NULL,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE payer_transitions(
@@ -266,7 +275,8 @@ CREATE TABLE payers(
 	uncovered_immunizations	INT NOT NULL,
 	unique_customers	INT NOT NULL,
 	qols_avg	DECIMAL(20, 19) NOT NULL,	
-	member_months INT NOT NULL
+	member_months INT NOT NULL,
+	PRIMARY KEY (id)
 );
 
 
@@ -294,7 +304,8 @@ CREATE TABLE providers(
 	zip	VARCHAR(20) NOT NULL,
 	lat	DECIMAL(22, 20) NOT NULL,
 	lon	DECIMAL(22, 20) NOT NULL,
-	utilization INT NOT NULL
+	utilization INT NOT NULL,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE supplies(
