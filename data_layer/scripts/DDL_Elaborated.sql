@@ -194,10 +194,10 @@ CREATE TABLE Severity_reaction_allergy(
 CREATE TABLE Patients_Allergies(
     id int NOT NULL AUTO_INCREMENT,
 	allergy BIGINT NOT NULL,
-	patient CHAR(36) NOT NULL,
+	encounter CHAR(36) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (allergy) REFERENCES Allergies(code),
-	FOREIGN KEY (patient) REFERENCES Patients(id)
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
 CREATE TABLE Patients_Allergies_Reaction(
@@ -218,9 +218,18 @@ CREATE TABLE Conditions(
 	PRIMARY KEY (code)
 );
 
+CREATE TABLE Conditions_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	condition BIGINT NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (condition) REFERENCES Conditions(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
+
 --Devices
 CREATE TABLE Devices(
-	udi VARCHAR(100) NOT NULL, --Unique Device Identifier
+	id VARCHAR(100) NOT NULL, --Unique Device Identifier
 	type INT NOT NULL,
 	PRIMARY KEY (udi),
 	FOREIGN KEY (type) REFERENCES Types_device(code)
@@ -232,6 +241,15 @@ CREATE TABLE Types_device(
 	PRIMARY KEY (code)
 )
 
+CREATE TABLE Devices_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	device  VARCHAR(100) NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (device) REFERENCES Devices(id),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
+
 --Immunizations
 CREATE TABLE Immunizations(
 	code	INT NOT NULL, -- probabilmente PK
@@ -239,6 +257,15 @@ CREATE TABLE Immunizations(
 	base_cost	DECIMAL(10, 2) NOT NULL,
 	PRIMARY KEY (code)
 );
+
+CREATE TABLE Immunizations_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	immunization  INT NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (immunization) REFERENCES Immunizations(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
 
 --Supplies
 --TODO: quantity INT NOT NULL da inserire nella tabella di legame tra encounter e Supplies
@@ -248,6 +275,16 @@ CREATE TABLE Supplies(
 	PRIMARY KEY (code)
 );
 
+CREATE TABLE Supplies_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	supply  INT NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (supply) REFERENCES Supplies(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
+
+--Careplans
 CREATE TABLE Careplans(
 	code BIGINT NOT NULL, -- probabilmente PK
 	description VARCHAR(100),	
@@ -260,6 +297,19 @@ CREATE TABLE Reasons(
 	PRIMARY KEY(code)
 );
 
+
+CREATE TABLE Careplans_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	careplan  BIGINT NOT NULL,
+	reason INT NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (careplan) REFERENCES Careplans(code),
+	FOREIGN KEY (reason) REFERENCES Reasons(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
+
+--Observations
 CREATE TABLE Observations(
 	category VARCHAR(50),
 	code	VARCHAR(50),
@@ -269,11 +319,31 @@ CREATE TABLE Observations(
 	type  VARCHAR(10)
 );
 
+CREATE TABLE Observations_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	observation  VARCHAR(50) NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (observation) REFERENCES Observations(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
+
+
+--Procecures
 CREATE TABLE Procedures(
 	code	BIGINT NOT NULL,
 	description	TEXT,
 	base_cost	DECIMAL(10, 2) NOT NULL,
 );
+
+CREATE TABLE Procedures_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	procedure BIGINT NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (observation) REFERENCES Procedures(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
 
 CREATE TABLE Organizations(
 	id	CHAR(36) NOT NULL,
@@ -318,6 +388,18 @@ CREATE TABLE Medications(
 	totalcost	DECIMAL(10, 2) NOT NULL,--QUESTO è IL PRODOTTO TRA DISPENSES E BASE_COST, SI PUò CALCOLARE
 	PRIMARY KEY (code)
 );
+
+
+CREATE TABLE Medications_Encounter(
+	id int NOT NULL AUTO_INCREMENT,
+	medication INT NOT NULL,
+	encounter CHAR(36) NOT NULL,
+	reason INT NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (medication) REFERENCES Medications(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+)
+
 
 CREATE TABLE Encounters(
 	id	CHAR(36) NOT NULL PRIMARY KEY,
