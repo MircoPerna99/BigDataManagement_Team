@@ -69,3 +69,5 @@ organization → organizations(id)
 ## supplies
 patient → patients(id)
 encounter → encounters(id)
+
+# Domande
