@@ -25,8 +25,8 @@ CREATE TABLE Patients (
 	PRIMARY KEY (id),
 	FOREIGN KEY (race) REFERENCES Races(id),
 	FOREIGN KEY (ethnicity) REFERENCES Ethnicities(id),
-	FOREIGN KEY (city) REFERENCES Cities(id),
-);
+	FOREIGN KEY (city) REFERENCES Cities(id)
+)
 
 CREATE TABLE Cities
 (
@@ -140,7 +140,7 @@ CREATE TABLE Providers(
 	lon	DECIMAL(22, 20) NOT NULL,
 	utilization INT NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (speciality) REFERENCES Specialities(id)
+	FOREIGN KEY (speciality) REFERENCES Specialities(id),
 	FOREIGN KEY (organization) REFERENCES Organizations(id)
 );
 
@@ -151,16 +151,15 @@ CREATE TABLE Specialities
     PRIMARY KEY (Id)
 )
 
---ALLERGIES
---TODO:Aggiungere tabelle di legame
+
 CREATE TABLE Allergies ( -- possibile problema nei dati manca l'id come guid
 	code BIGINT NOT NULL, -- probabilmente PK
-	`system` VARCHAR(100) NOT NULL, --Da eliminare perché il dato è sempre uguale
+	`system` VARCHAR(100) NOT NULL,
 	description	VARCHAR(100) NOT NULL,
 	type INT NOT NULL,
 	category INT NOT NULL,
 	PRIMARY KEY (code),
-	FOREIGN KEY (category) REFERENCES Category_allergies(id),
+	FOREIGN KEY (category) REFERENCES Categories_allergy(id),
 	FOREIGN KEY (type) REFERENCES Types_allergy(id)
 )
 
@@ -181,7 +180,7 @@ CREATE TABLE Categories_allergy
 CREATE TABLE Reactions
 (
 	Id INT NOT NULL,
-	description VARCHAR(100)
+	description VARCHAR(100),
 	PRIMARY KEY (Id)
 )
 
@@ -207,11 +206,11 @@ CREATE TABLE Patients_Allergies_Reaction(
 	SeverityId int not null,
 	PRIMARY KEY (id),
 	FOREIGN KEY (patientAllergy) REFERENCES Patients_Allergies(id),
-	FOREIGN KEY (reactionId) REFERENCES Reactions(id)
+	FOREIGN KEY (reactionId) REFERENCES Reactions(id),
 	FOREIGN KEY (SeverityId) REFERENCES Severity_reaction_allergy(id)
 )
 
---Conditions
+
 CREATE TABLE Conditions(
 	code BIGINT NOT NULL,	
 	description VARCHAR(100) NOT NULL,
@@ -220,18 +219,18 @@ CREATE TABLE Conditions(
 
 CREATE TABLE Conditions_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
-	condition BIGINT NOT NULL,
+	`condition` BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (condition) REFERENCES Conditions(code),
+	FOREIGN KEY (`condition`) REFERENCES Conditions(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
---Devices
+
 CREATE TABLE Devices(
-	id VARCHAR(100) NOT NULL, --Unique Device Identifier
+	id VARCHAR(100) NOT NULL, 
 	type INT NOT NULL,
-	PRIMARY KEY (udi),
+	PRIMARY KEY (id),
 	FOREIGN KEY (type) REFERENCES Types_device(code)
 );
 
@@ -240,6 +239,7 @@ CREATE TABLE Types_device(
 	description VARCHAR(100) NOT NULL,
 	PRIMARY KEY (code)
 )
+
 
 CREATE TABLE Devices_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
@@ -250,13 +250,14 @@ CREATE TABLE Devices_Encounter(
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
---Immunizations
+
 CREATE TABLE Immunizations(
 	code	INT NOT NULL, -- probabilmente PK
 	description	 TEXT NOT NULL,
 	base_cost	DECIMAL(10, 2) NOT NULL,
 	PRIMARY KEY (code)
 );
+
 
 CREATE TABLE Immunizations_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
@@ -267,13 +268,12 @@ CREATE TABLE Immunizations_Encounter(
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
---Supplies
---TODO: quantity INT NOT NULL da inserire nella tabella di legame tra encounter e Supplies
 CREATE TABLE Supplies(
 	code	INT NOT NULL,
 	description	VARCHAR(100) NOT NULL,
 	PRIMARY KEY (code)
 );
+
 
 CREATE TABLE Supplies_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
@@ -284,7 +284,7 @@ CREATE TABLE Supplies_Encounter(
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
---Careplans
+
 CREATE TABLE Careplans(
 	code BIGINT NOT NULL, -- probabilmente PK
 	description VARCHAR(100),	
@@ -309,97 +309,109 @@ CREATE TABLE Careplans_Encounter(
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
---Observations
 CREATE TABLE Observations(
-	category VARCHAR(50),
-	code	VARCHAR(50),
+	code	VARCHAR(50) PRIMARY KEY,
 	description	BLOB NOT NULL,
 	value	TEXT NOT NULL,
-	units	VARCHAR(50),
-	type  VARCHAR(10)
+	`type` int not null,
+	FOREIGN KEY (`type`) REFERENCES Observations_Type(id)
 );
+
+
+
+
+CREATE TABLE Observations_Unit(
+	id int NOT NULL AUTO_INCREMENT,
+	name VARCHAR(50),
+	PRIMARY KEY (id)
+)
+
+
+CREATE TABLE Observations_Category(
+	id int NOT NULL AUTO_INCREMENT,
+	name VARCHAR(50),
+	PRIMARY KEY (id)
+)
+
+CREATE TABLE Observations_Type(
+	id int NOT NULL AUTO_INCREMENT,
+	name VARCHAR(10),
+	PRIMARY KEY (id)
+)
+
+
+create TABLE Observations_Unit_Used
+(
+	observation VARCHAR(50) NOT NULL,
+	unit INT NOT NULL,
+	PRIMARY KEY (observation),
+	FOREIGN KEY (observation) REFERENCES Observations(code),
+	FOREIGN KEY (unit) REFERENCES Observations_Unit(id)
+)
+
+
+CREATE TABLE Observations_Category_Used
+(
+	observation VARCHAR(50) NOT NULL,
+	category INT NOT NULL,
+	PRIMARY KEY (observation, category),
+	FOREIGN KEY (observation) REFERENCES Observations(code),
+	FOREIGN KEY (category) REFERENCES Observations_Category(id)
+)
 
 CREATE TABLE Observations_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	observation  VARCHAR(50) NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (observation) REFERENCES Observations(code),
+	FOREIGN KEY (observation) REFERENCES Observations(id),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
-
---Procecures
 CREATE TABLE Procedures(
 	code	BIGINT NOT NULL,
 	description	TEXT,
 	base_cost	DECIMAL(10, 2) NOT NULL,
+	PRIMARY KEY(code)
 );
 
 CREATE TABLE Procedures_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
-	procedure BIGINT NOT NULL,
+	`procedure` BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (observation) REFERENCES Procedures(code),
+	FOREIGN KEY (`procedure`) REFERENCES Procedures(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 )
 
-CREATE TABLE Organizations(
-	id	CHAR(36) NOT NULL,
-	name	VARCHAR(100) NOT NULL,
-	address	VARCHAR(100) NOT NULL,
-	city	VARCHAR(50) NOT NULL,
-	state	CHAR(2) NOT NULL,
-	zip	VARCHAR(20) NOT NULL,
-	lat	DECIMAL(22, 20) NOT NULL,
-	lon	DECIMAL(22, 20) NOT NULL,
-	phone	VARCHAR(50),
-	revenue	DECIMAL(2, 1) NOT NULL, --SEMPRE UGUALE A 0
-	utilization INT NOT NULL,
-	PRIMARY KEY (id)
-);
-
-CREATE TABLE Providers(
-	id	CHAR(36) NOT NULL,
-	organization	CHAR(36) NOT NULL,
-	name	VARCHAR(50) NOT NULL,
-	gender	CHAR(1) NOT NULL,
-	speciality	VARCHAR(50) NOT NULL,
-	address	VARCHAR(50) NOT NULL,--UGUALE A ORGANIZATIONS
-	city	VARCHAR(50) NOT NULL,--UGUALE A ORGANIZATIONS
-	state	CHAR(2) NOT NULL,--UGUALE A ORGANIZATIONS
-	zip	VARCHAR(20) NOT NULL,--UGUALE A ORGANIZATIONS
-	lat	DECIMAL(22, 20) NOT NULL,--UGUALE A ORGANIZATIONS
-	lon	DECIMAL(22, 20) NOT NULL,--UGUALE A ORGANIZATIONS
-	utilization INT NOT NULL, --SEMPRE UGUALE A 0
-	PRIMARY KEY (id),
-	FOREIGN KEY organization REFERENCES Organizations(id)
-);
-
-
---PAYER PUò ESSERE DIVERSO PER LO STESSO PAZIENTE
 CREATE TABLE Medications(
 	code	INT NOT NULL,	
 	description	TEXT NOT NULL,
 	base_cost	DECIMAL(10, 2) NOT NULL,
-	payer_coverage	DECIMAL(10, 2) NOT NULL,
-	dispenses	INT NOT NULL, --QUESTO VA MESSO NELLA TABELLA DI RELAZIONE
-	totalcost	DECIMAL(10, 2) NOT NULL,--QUESTO è IL PRODOTTO TRA DISPENSES E BASE_COST, SI PUò CALCOLARE
 	PRIMARY KEY (code)
 );
 
+CREATE TABLE Medications_Payer(
+	id int NOT NULL AUTO_INCREMENT,
+	medication_encounter INT NOT NULL,
+	payer	CHAR(36) NOT NULL,
+	payer_coverage	DECIMAL(10, 2) NOT NULL,
+	PRIMARY KEY (id),
+	FOREIGN KEY (payer) REFERENCES Payers(id),
+	FOREIGN KEY (medication_encounter) REFERENCES Medications_Encounter(id)
+);
 
 CREATE TABLE Medications_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	medication INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	reason INT NOT NULL,
+	dispenses	INT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (medication) REFERENCES Medications(code),
-	FOREIGN KEY (encounter) REFERENCES Encounters(id)
+	FOREIGN KEY (encounter) REFERENCES Encounters(id),
+	FOREIGN KEY (reason) REFERENCES Reasons(code)
 )
-
 
 CREATE TABLE Encounters(
 	id	CHAR(36) NOT NULL PRIMARY KEY,
@@ -409,11 +421,14 @@ CREATE TABLE Encounters(
 	payer CHAR(36) NOT NULL,
 	encounterclass	INT NOT NULL,
 	typeencounter INT NOT NULL,
-	total_claim_cost	DECIMAL(10, 2) NOT NULL, --QUESTO è IL TOTALE DEL CLAIMS
+	total_claim_cost	DECIMAL(10, 2) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
-	PRIMARY KEY(code),
-	FOREIGN KEY encounterclass REFERENCES Classes_encounter(id),
-	FOREIGN KEY typeencounter REFERENCES Types_encounter(code)
+    FOREIGN KEY (encounterclass) REFERENCES Classes_encounter(id),
+    FOREIGN KEY (typeencounter) REFERENCES Types_encounter(code),
+	FOREIGN KEY (patient) REFERENCES Patients(id),
+	FOREIGN KEY (organization) REFERENCES Organizations(id), -- Assuming this exists
+    FOREIGN KEY (provider) REFERENCES Providers(id), -- Assuming this exists
+    FOREIGN KEY (payer) REFERENCES Payers(id)
 );
 
 CREATE TABLE Classes_encounter(
@@ -431,36 +446,74 @@ CREATE TABLE Types_encounter(
 
 CREATE TABLE Claims(
 	id	CHAR(36) NOT NULL PRIMARY KEY,
-	patientid CHAR(36) NOT NULL,
-	providerid CHAR(36) NOT NULL,--FK con providers
-	primarypatientinsuranceid	VARCHAR(36) NOT NULL,-- VARCHAR perché alcuni sono uguali a 0
-	secondarypatientinsuranceid	VARCHAR(36) NOT NULL,-- VARCHAR perché alcuni sono uguali a 0
-	departmentid INT NOT NULL, --QUESTO è SEMPRE UGUALE A patientdepartmentid
-	patientdepartmentid	INT NOT NULL, --QUESTO è SEMPRE UGUALE A departmentid
-	--Diagnosi sono il reason code
-	diagnosis1	BIGINT NOT NULL,
-	diagnosis2	BIGINT,
-	diagnosis3	BIGINT,
-	diagnosis4	BIGINT,
-	diagnosis5	BIGINT,
-	diagnosis6	BIGINT,
-	diagnosis7	BIGINT,
-	diagnosis8	BIGINT,
-	referringproviderid	INT, -- valori tutti nulli da dare un'occhiata
+	providerid CHAR(36) NOT NULL,
+	departmentid INT NOT NULL,
+	patientdepartmentid	INT NOT NULL,
 	appointmentid	CHAR(36) NOT NULL, -- è riferito alla encounters
 	currentillnessdate	DATE NOT NULL,
 	servicedate	DATE NOT NULL,
-	supervisingproviderid	CHAR(36) NOT NULL,   --FK con providers
+	supervisingproviderid	CHAR(36) NOT NULL,   -- FK con providers
 	status1	VARCHAR(20) NOT NULL, -- CLOSED o BILLED
 	status2	VARCHAR(20),-- CLOSED o BILLED o NULL
 	statusp	VARCHAR(20) NOT NULL,
-	outstanding1 DECIMAL(10, 2) NOT NULL, --SEMPRE ZERO
-	outstanding2 DECIMAL(10, 2),	--ZERO O NULL
-	outstandingp DECIMAL(10, 2) NOT NULL,	--SEMPRE ZERO
 	lastbilleddate1	 DATE NOT NULL,
 	lastbilleddate2	DATE ,
 	lastbilleddatep	DATE NOT NULL,
 	healthcareclaimtypeid1	INT NOT NULL,
 	healthcareclaimtypeid2 INT NOT NULL,
-	PRIMARY KEY(id)
+	FOREIGN KEY (appointmentid) REFERENCES Encounters(id),
+	FOREIGN KEY (providerid) REFERENCES Providers(id),
+	FOREIGN KEY (supervisingproviderid) REFERENCES Providers(id)
+);
+
+CREATE TABLE Patient_insurance(
+	id INT NOT NULL AUTO_INCREMENT,
+	claim CHAR(36) NOT NULL,
+	insurance CHAR(36) NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY (claim) REFERENCES Claims(id),
+	FOREIGN KEY (insurance) REFERENCES Payers(id)
+)
+
+CREATE TABLE Diagnosis(
+    id INT NOT NULL AUTO_INCREMENT,
+	claim CHAR(36) NOT NULL,
+	reason INT NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY (claim) REFERENCES Claims(id),
+	FOREIGN KEY (reason) REFERENCES Reasons(code)
+)
+
+CREATE TABLE claimsTransaction(
+	id CHAR(36) NOT NULL,
+	claimid CHAR(36) NOT NULL,
+	chargeid INT NOT NULL,
+	type	VARCHAR(20) NOT NULL,
+	amount	DECIMAL(10, 2),  -- 10 digits total, 2 after decimal
+	method	VARCHAR(20),
+	fromdate DATE NOT NULL,
+	todate	 DATE NOT NULL,
+	placeofservice	CHAR(36) NOT NULL,
+	procedurecode	BIGINT NOT NULL,
+	modifier1	VARCHAR(100),
+	modifier2	VARCHAR(100),
+	diagnosisref1 INT NOT NULL, -- I valori sono o vuoiti o uguali a al numero finale
+	diagnosisref2 INT,-- I valori sono o vuoiti o uguali a al numero finale
+	diagnosisref3 INT,-- I valori sono o vuoiti o uguali a al numero finale
+	diagnosisref4 INT,-- I valori sono o vuoiti o uguali a al numero finale
+	units	INT NOT NULL, -- Valori tutti uguali a uno
+	departmentid INT NOT NULL,
+	notes	TEXT NOT NULL,
+	unitamount	DECIMAL(10, 2),
+	transferoutid	INT,
+	transfertype	CHAR(1),
+	payments	DECIMAL(10, 2),
+	adjustments VARCHAR(20),
+	transfers DECIMAL(10, 2),
+	outstanding	DECIMAL(10, 2),
+	linenote VARCHAR(100),
+	patientinsuranceid	CHAR(36), -- probabilmente FK
+	feescheduleid INT NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY (claimid) REFERENCES Claims(id)
 );

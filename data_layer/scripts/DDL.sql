@@ -71,14 +71,15 @@ CREATE TABLE claimsTransaction(
 	PRIMARY KEY(id)
 );
 
-CREATE TABLE claims(
+CREATE TABLE Claims(
 	id	CHAR(36) NOT NULL PRIMARY KEY,
 	patientid CHAR(36) NOT NULL,
-	providerid CHAR(36) NOT NULL,
+	providerid CHAR(36) NOT NULL,--FK con providers
 	primarypatientinsuranceid	VARCHAR(36) NOT NULL,-- VARCHAR perché alcuni sono uguali a 0
 	secondarypatientinsuranceid	VARCHAR(36) NOT NULL,-- VARCHAR perché alcuni sono uguali a 0
-	departmentid INT NOT NULL,
-	patientdepartmentid	INT NOT NULL,
+	departmentid INT NOT NULL, --QUESTO è SEMPRE UGUALE A patientdepartmentid
+	patientdepartmentid	INT NOT NULL, --QUESTO è SEMPRE UGUALE A departmentid
+	--Diagnosi sono il reason code
 	diagnosis1	BIGINT NOT NULL,
 	diagnosis2	BIGINT,
 	diagnosis3	BIGINT,
@@ -88,16 +89,16 @@ CREATE TABLE claims(
 	diagnosis7	BIGINT,
 	diagnosis8	BIGINT,
 	referringproviderid	INT, -- valori tutti nulli da dare un'occhiata
-	appointmentid	CHAR(36) NOT NULL, -- possibile FK
+	appointmentid	CHAR(36) NOT NULL, -- è riferito alla encounters
 	currentillnessdate	DATE NOT NULL,
 	servicedate	DATE NOT NULL,
-	supervisingproviderid	CHAR(36) NOT NULL,   -- possibile FK
-	status1	VARCHAR(20) NOT NULL,
-	status2	VARCHAR(20),
+	supervisingproviderid	CHAR(36) NOT NULL,   --FK con providers
+	status1	VARCHAR(20) NOT NULL, -- CLOSED o BILLED
+	status2	VARCHAR(20),-- CLOSED o BILLED o NULL
 	statusp	VARCHAR(20) NOT NULL,
-	outstanding1 DECIMAL(10, 2) NOT NULL,
-	outstanding2 DECIMAL(10, 2),	
-	outstandingp DECIMAL(10, 2) NOT NULL,	
+	outstanding1 DECIMAL(10, 2) NOT NULL, --SEMPRE ZERO
+	outstanding2 DECIMAL(10, 2),	--ZERO O NULL
+	outstandingp DECIMAL(10, 2) NOT NULL,	--SEMPRE ZERO
 	lastbilleddate1	 DATE NOT NULL,
 	lastbilleddate2	DATE ,
 	lastbilleddatep	DATE NOT NULL,
@@ -182,7 +183,7 @@ CREATE TABLE medications(
 	base_cost	DECIMAL(10, 2) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
 	dispenses	INT NOT NULL,
-	totalcost	DECIMAL(10, 2) NOT NULL,
+	totalcost	DECIMAL(10, 2) NOT NULL,--QUESTO è IL PRODOTTO TRA DISPENSES E BASE_COST, SI PUò CALCOLARE
 	reasoncode	BIGINT,
 	reasondescription TEXT
 );
