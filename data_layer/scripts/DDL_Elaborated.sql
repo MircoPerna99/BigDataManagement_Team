@@ -1,4 +1,8 @@
-
+CREATE TABLE Conditions(
+	code BIGINT NOT NULL,	
+	description VARCHAR(100) NOT NULL,
+	PRIMARY KEY (code)
+);
 CREATE TABLE Races
 (
     id int NOT NULL AUTO_INCREMENT,
@@ -186,11 +190,6 @@ CREATE TABLE Severity_reaction_allergy(
     PRIMARY KEY (Id)
 );
 
-CREATE TABLE Conditions(
-	code BIGINT NOT NULL,	
-	description VARCHAR(100) NOT NULL,
-	PRIMARY KEY (code)
-);
 
 CREATE TABLE Types_device(
 	code INT NOT NULL,	
@@ -319,7 +318,7 @@ CREATE TABLE Medications_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	medication INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
-	reason INT NOT NULL,
+	reason BIGINT NOT NULL,
 	dispenses	INT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (medication) REFERENCES Medications(code),
@@ -358,7 +357,7 @@ CREATE TABLE Observations_Encounter(
 CREATE TABLE Careplans_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	careplan  BIGINT NOT NULL,
-	reason INT NOT NULL,
+	reason BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (careplan) REFERENCES Careplans(code),
@@ -456,7 +455,7 @@ CREATE TABLE Patient_insurance(
 CREATE TABLE Diagnosis(
     id INT NOT NULL AUTO_INCREMENT,
 	claim CHAR(36) NOT NULL,
-	reason INT NOT NULL,
+	reason BIGINT NOT NULL,
 	PRIMARY KEY(id),
 	FOREIGN KEY (claim) REFERENCES Claims(id),
 	FOREIGN KEY (reason) REFERENCES Conditions(code)
