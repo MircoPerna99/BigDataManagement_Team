@@ -224,12 +224,6 @@ CREATE TABLE Careplans(
 	PRIMARY KEY(code)
 );
 
-CREATE TABLE Reasons(
-	code INT NOT NULL,
-	description VARCHAR(100),	
-	PRIMARY KEY(code)
-);
-
 CREATE TABLE Observations_Type(
 	id int NOT NULL AUTO_INCREMENT,
 	name VARCHAR(10),
@@ -330,7 +324,7 @@ CREATE TABLE Medications_Encounter(
 	PRIMARY KEY (id),
 	FOREIGN KEY (medication) REFERENCES Medications(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id),
-	FOREIGN KEY (reason) REFERENCES Reasons(code)
+	FOREIGN KEY (reason) REFERENCES Conditions(code)
 );
 
 CREATE TABLE Medications_Payer(
@@ -368,7 +362,7 @@ CREATE TABLE Careplans_Encounter(
 	encounter CHAR(36) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (careplan) REFERENCES Careplans(code),
-	FOREIGN KEY (reason) REFERENCES Reasons(code),
+	FOREIGN KEY (reason) REFERENCES Conditions(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
@@ -465,7 +459,7 @@ CREATE TABLE Diagnosis(
 	reason INT NOT NULL,
 	PRIMARY KEY(id),
 	FOREIGN KEY (claim) REFERENCES Claims(id),
-	FOREIGN KEY (reason) REFERENCES Reasons(code)
+	FOREIGN KEY (reason) REFERENCES Conditions(code)
 );
 
 CREATE TABLE claimsTransaction(
