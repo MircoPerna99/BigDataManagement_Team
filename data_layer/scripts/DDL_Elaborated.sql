@@ -115,15 +115,15 @@ CREATE TABLE Organizations(
 	id	CHAR(36) NOT NULL,
 	name	VARCHAR(100) NOT NULL,
 	address	VARCHAR(100) NOT NULL,
-	city	VARCHAR(50) NOT NULL,
-	state	CHAR(2) NOT NULL,
+	city INT NOT NULL,
 	zip_code	VARCHAR(20) NOT NULL,
 	lat	DECIMAL(22, 20) NOT NULL,
 	lon	DECIMAL(22, 20) NOT NULL,
 	phone	VARCHAR(50),
 	revenue	DECIMAL(2, 1) NOT NULL,
 	utilization INT NOT NULL,
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	FOREIGN KEY (city) REFERENCES Cities(id)
 );
 
 CREATE TABLE Specialities
@@ -141,15 +141,15 @@ CREATE TABLE Providers(
 	gender	CHAR(1) NOT NULL,
 	speciality	INT NOT NULL,
 	address	VARCHAR(50) NOT NULL,
-	city	VARCHAR(50) NOT NULL,
-	state	CHAR(2) NOT NULL,
+	city INT NOT NULL,
 	zip_code	VARCHAR(20) NOT NULL,
 	lat	DECIMAL(22, 20) NOT NULL,
 	lon	DECIMAL(22, 20) NOT NULL,
 	utilization INT NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (speciality) REFERENCES Specialities(id),
-	FOREIGN KEY (organization) REFERENCES Organizations(id)
+	FOREIGN KEY (organization) REFERENCES Organizations(id),
+	FOREIGN KEY (city) REFERENCES Cities(id)
 );
 
 CREATE TABLE Categories_allergy
@@ -175,13 +175,6 @@ CREATE TABLE Allergies ( -- possibile problema nei dati manca l'id come guid
 	PRIMARY KEY (code),
 	FOREIGN KEY (category) REFERENCES Categories_allergy(id),
 	FOREIGN KEY (type) REFERENCES Types_allergy(id)
-);
-
-CREATE TABLE Reactions
-(
-	Id INT NOT NULL,
-	description VARCHAR(100),
-	PRIMARY KEY (Id)
 );
 
 CREATE TABLE Severity_reaction_allergy(
@@ -320,6 +313,8 @@ CREATE TABLE Medications_Encounter(
 	encounter CHAR(36) NOT NULL,
 	reason BIGINT NOT NULL,
 	dispenses	INT NOT NULL,
+	start DATE NOT NULL,
+	stop DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (medication) REFERENCES Medications(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id),
@@ -340,6 +335,8 @@ CREATE TABLE Procedures_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	`procedure` BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	start DATE NOT NULL,
+	stop DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (`procedure`) REFERENCES Procedures(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
@@ -349,6 +346,7 @@ CREATE TABLE Observations_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	observation  VARCHAR(50) NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	`date` DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (observation) REFERENCES Observations(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
@@ -359,6 +357,8 @@ CREATE TABLE Careplans_Encounter(
 	careplan  BIGINT NOT NULL,
 	reason BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	start DATE NOT NULL,
+	stop DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (careplan) REFERENCES Careplans(code),
 	FOREIGN KEY (reason) REFERENCES Conditions(code),
@@ -369,6 +369,7 @@ CREATE TABLE Supplies_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	supply  INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	`date` DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (supply) REFERENCES Supplies(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
@@ -378,6 +379,7 @@ CREATE TABLE Immunizations_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	immunization  INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	`date` DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (immunization) REFERENCES Immunizations(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
@@ -387,6 +389,8 @@ CREATE TABLE Devices_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	device  VARCHAR(100) NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	start DATE NOT NULL,
+	stop DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (device) REFERENCES Devices(id),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
@@ -396,6 +400,8 @@ CREATE TABLE Conditions_Encounter(
 	id int NOT NULL AUTO_INCREMENT,
 	`condition` BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
+	start DATE NOT NULL,
+	stop DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (`condition`) REFERENCES Conditions(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
@@ -413,11 +419,13 @@ CREATE TABLE Patients_Allergies(
 CREATE TABLE Patients_Allergies_Reaction(
 	id int NOT NULL AUTO_INCREMENT,
 	patientAllergy int NOT NULL,
-	reactionId int not null,
-	SeverityId int not null,
+	reactionId BIGINT not null,
+	severityId int not null,
+	start DATE NOT NULL,
+	stop DATE,	
 	PRIMARY KEY (id),
 	FOREIGN KEY (patientAllergy) REFERENCES Patients_Allergies(id),
-	FOREIGN KEY (reactionId) REFERENCES Reactions(id),
+	FOREIGN KEY (reactionId) REFERENCES Conditions(code),
 	FOREIGN KEY (SeverityId) REFERENCES Severity_reaction_allergy(id)
 );
 
@@ -443,7 +451,7 @@ CREATE TABLE Claims(
 	FOREIGN KEY (supervisingproviderid) REFERENCES Providers(id)
 );
 
-CREATE TABLE Patient_insurance(
+CREATE TABLE Patient_Insurance(
 	id INT NOT NULL AUTO_INCREMENT,
 	claim CHAR(36) NOT NULL,
 	insurance CHAR(36) NOT NULL,
@@ -461,7 +469,7 @@ CREATE TABLE Diagnosis(
 	FOREIGN KEY (reason) REFERENCES Conditions(code)
 );
 
-CREATE TABLE claimsTransaction(
+CREATE TABLE Claims_Transaction(
 	id CHAR(36) NOT NULL,
 	claimid CHAR(36) NOT NULL,
 	chargeid INT NOT NULL,

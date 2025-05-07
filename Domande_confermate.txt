@@ -1,10 +1,14 @@
-Identificare la procedura con il maggior costo  nell'anno 2021
+Identificare la procedura con il maggior costo  nell'anno 2021 --Inserire più dimensioni
 Problematica più presente nei pazienti nell'anno 2021
-Età media dei pazienti in base alla problematica
-Allergie più frequenti in base sesso 
+
+Età media dei pazienti in base alla problematica negli ultimi 5 anni suddivisa per regione --Confermata
+Allergie più frequenti in base sesso negli ultimi 5 anni e dove 
 Quante persone per fascia di eta sono vaccinate per ogni vaccino
-Numero di giorni di ricoverso per Chronica condition
+Numero di giorni di ricovero per condizione clinica
 Le malattie più frequenti per ospedale
+
 Numero di pazienti per ospedale in base al sesso ed alla fascia di eta negli ultimi 5 anni
-Qauntità di copertura fornita dall'associazioni negli ultimi 5 anni
+Quantità di copertura fornita dall'associazioni negli ultimi 5 anni suddivisa sempre per paese
 Numero di pazienti per fascia di età per ogni medico di base negli ultimi 5 anni
+
+--TODO:Aggiungere spazio e tempo
