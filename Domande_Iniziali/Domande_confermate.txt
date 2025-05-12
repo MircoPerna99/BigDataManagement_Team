@@ -1,0 +1,47 @@
+Costo delle procedure sanitaria, suddivisa per anno, regione e struttura ospedaliera
+FATTO: Tabella -> Procedures_Encounters
+       Nuovo Nome -> Carry_out
+
+Quali sono le condizioni cliniche più frequenti, analizzate per anno, area geografica e fascia di età?
+FATTO: Tabella -> Condition_Encounters
+       Nuovo Nome -> diagnosed
+
+Qual è l’età media dei pazienti affetti  da Hyperlipidemia per regione negli ultimi 5 anni?
+FATTO: Tabella -> Condition_Encounters
+       Nuovo Nome -> diagnosed
+
+Quali allergie sono più frequenti, distinte per sesso, area geografica e anno?
+FATTO: Tabella -> Patiants_Allergies
+       Nuovo Nome -> Affected by
+
+Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, area geografica e anno?
+FATTO: Tabella -> Immunizations_Encounters
+       Nuovo Nome -> Administer
+       TODO:Cambiare nome tabella vaccini
+
+Qual è il numero di pazienti trattati, analizzato per struttura ospedaliera, sesso e fascia di età negli ultimi 5 anni?
+FATTO: Tabella -> Encounters
+       Nuovo Nome -> Attended (Probabile reificazione)
+
+Quanti pazienti sono seguiti da ciascun medico di base, suddivisi per fascia di età, sesso e anno?
+FATTO: Tabella -> Encounters
+       Nuovo Nome -> Attended (Probabile reificazione)
+
+Numero di pazienti affetti da covid-19 per ospedali, suddivisi per sesso e fascia di eta?
+FATTO: Tabella -> Encounters
+       Nuovo Nome -> Attended (Probabile reificazione)
+
+Effetti più frequenti per allergie per fascia di età, sesso e gravita
+Quali allergie sono più frequenti, distinte per sesso, area geografica e anno?
+FATTO: Tabella -> Patiants_Allergies
+       Nuovo Nome -> Affected by
+
+Frequenza di utilizzo dei supplies utilizzati per malattie negli ultimi 5 anni per ospedale
+FATTO: Tabella -> Supplies_Allergies
+       Nuovo Nome -> Used
+
+
+BONUS
+Frequenza di visite pre natali per struttura ospedaliera fascia di età negli ultimi 5 anni?
+FATTO: Tabella -> Encounters
+       Nuovo Nome -> Attended (Probabile reificazione)
