@@ -12,3 +12,26 @@ Quantità di copertura fornita dall'associazioni negli ultimi 5 anni suddivisa s
 Numero di pazienti per fascia di età per ogni medico di base negli ultimi 5 anni
 
 --TODO:Aggiungere spazio e tempo
+
+
+--------------------------------------------------------------
+
+Qual è la procedura sanitaria con il costo più elevato, suddivisa per anno, regione e struttura ospedaliera?
+
+Quali sono le condizioni cliniche più frequenti, analizzate per anno, area geografica e fascia di età?
+
+Qual è l’età media dei pazienti per ciascuna problematica clinica, suddivisa per problematica, regione e anno?
+
+Quali allergie sono più frequenti, distinte per sesso, area geografica e anno?
+
+Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, area geografica e anno?
+
+Qual è il numero medio di giorni di ricovero per ciascuna condizione clinica, segmentato per condizione, struttura ospedaliera e anno?
+
+Quali patologie sono più comuni, classificate per ospedale, fascia di età e anno?
+
+Qual è il numero di pazienti trattati, analizzato per struttura ospedaliera, sesso e fascia di età negli ultimi 5 anni?
+
+Quanta copertura sanitaria è stata fornita dalle associazioni, ripartita per tipo di servizio, paese e anno?
+
+Quanti pazienti sono seguiti da ciascun medico di base, suddivisi per fascia di età, sesso e anno?
