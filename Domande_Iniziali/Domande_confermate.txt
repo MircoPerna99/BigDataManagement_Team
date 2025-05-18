@@ -1,33 +1,34 @@
+Qual è il numero di visite effettuate, analizzato per struttura ospedaliera, sesso e fascia di età negli ultimi 5 anni?
+FATTO: Take place in
+
+Supplies utilizzati suddivisa per anno, regione e struttura ospedaliera
+FATTO: Require
+
+Numero di pazienti affetti da una malattia per ospedali, suddivisi per sesso e fascia di eta?
+FATTO: Plan
+
+Qual è l’età media dei pazienti affetti da Hyperlipidemia per ogni regione registrata negli ultimi 5 anni?
+FATTO: Plan
+
+Media giorni di cura necessari per  piano terapeutica per curare una malattia per ospedale e per anno 
+FATTO: Plan
+
 Costo delle procedure sanitaria, suddivisa per anno, regione e struttura ospedaliera
 FATTO: Carry_out
 
-Quali sono le condizioni cliniche più frequenti, analizzate per anno, area geografica e fascia di età?
-FATTO: Plan
-
-Qual è l’età media dei pazienti affetti  da Hyperlipidemia per regione negli ultimi 5 anni?
-FATTO: Plan
-
-Quali allergie sono più frequenti, distinte per sesso, area geografica e anno?
+Quali allergie sono più frequenti, distinte per sesso e razza, area geografica e anno ?
 FATTO: Affected by
-
-Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, area geografica e anno?
-FATTO: Administer
-
-Qual è il numero di pazienti trattati, analizzato per struttura ospedaliera, sesso e fascia di età negli ultimi 5 anni?
-FATTO: Take place in
-
-Quanti pazienti sono seguiti da ciascun medico di base, suddivisi per fascia di età, sesso e anno?
-FATTO: Conduct
-
-Numero di pazienti affetti da una malattia da decidere per ospedali, suddivisi per sesso e fascia di eta?
-FATTO: Plan
 
 Effetti più frequenti per allergie per fascia di età, sesso e gravita
-Quali allergie sono più frequenti, distinte per sesso, area geografica e anno?
 FATTO: Affected by
 
-Frequenza di utilizzo dei supplies utilizzati per malattie negli ultimi 5 anni per ospedale
-FATTO: Require
+Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, fascia di eta e razza, area geografica e anno?
+FATTO: Administer
+
+Numero di pazienti seguiti da ogni medico medico suddivisi per fascia di età, sesso, razza e regione per anno?
+FATTO: Conduct
 
 
 FATTI: Plan, Carry_out, Conduct, Take place in, Administer, Affected by, Require
+
+
