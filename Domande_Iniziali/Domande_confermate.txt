@@ -19,10 +19,10 @@ FATTO: Carry_out
 Quali allergie sono più frequenti, distinte per sesso e razza, area geografica e anno ?
 FATTO: Affected by
 
-Effetti più frequenti per allergie per fascia di età, sesso e gravita
+frequenza effetti collaterali per allergie per fascia di età, sesso
 FATTO: Affected by
 
-Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, fascia di eta e razza, area geografica e anno?
+Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, razza, area geografica e anno?
 FATTO: Administer
 
 Numero di pazienti seguiti da ogni medico medico suddivisi per fascia di età, sesso, razza e regione per anno?
