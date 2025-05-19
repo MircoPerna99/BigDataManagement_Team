@@ -25,7 +25,7 @@ FATTO: Affected by
 Quanti individui sono stati vaccinati per ogni tipo di vaccino, suddivisi per fascia di età, razza, area geografica e anno?
 FATTO: Administer
 
-Numero di pazienti seguiti da ogni medico medico suddivisi per fascia di età, sesso, razza e regione per anno?
+Numero visite  eseguiti da ogni medico suddivisi per fascia di età, sesso, razza e regione per anno?
 FATTO: Conduct
 
 
