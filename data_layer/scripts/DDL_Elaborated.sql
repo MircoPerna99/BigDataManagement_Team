@@ -177,12 +177,6 @@ CREATE TABLE Allergies ( -- possibile problema nei dati manca l'id come guid
 	FOREIGN KEY (type) REFERENCES Types_allergy(id)
 );
 
-CREATE TABLE Severity_reaction_allergy(
-    id int NOT NULL AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
-    PRIMARY KEY (Id)
-);
-
 
 CREATE TABLE Types_device(
 	code INT NOT NULL,	
@@ -299,6 +293,8 @@ CREATE TABLE Encounters(
 	typeencounter INT NOT NULL,
 	total_claim_cost	DECIMAL(10, 2) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
+	start DATE NOT NULL,
+	stop DATE,
     FOREIGN KEY (encounterclass) REFERENCES Classes_encounter(id),
     FOREIGN KEY (typeencounter) REFERENCES Types_encounter(code),
 	FOREIGN KEY (patient) REFERENCES Patients(id),
@@ -411,22 +407,14 @@ CREATE TABLE Patients_Allergies(
     id int NOT NULL AUTO_INCREMENT,
 	allergy BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (allergy) REFERENCES Allergies(code),
-	FOREIGN KEY (encounter) REFERENCES Encounters(id)
-);
-
-CREATE TABLE Patients_Allergies_Reaction(
-	id int NOT NULL AUTO_INCREMENT,
-	patientAllergy int NOT NULL,
-	reactionId BIGINT not null,
-	severityId int not null,
+	severity VARCHAR(50) NOT NULL,
+	reaction BIGINT not null,
 	start DATE NOT NULL,
 	stop DATE,	
 	PRIMARY KEY (id),
-	FOREIGN KEY (patientAllergy) REFERENCES Patients_Allergies(id),
+	FOREIGN KEY (allergy) REFERENCES Allergies(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id),
 	FOREIGN KEY (reactionId) REFERENCES Conditions(code),
-	FOREIGN KEY (SeverityId) REFERENCES Severity_reaction_allergy(id)
 );
 
 CREATE TABLE Claims(
@@ -502,4 +490,30 @@ CREATE TABLE Claims_Transaction(
 	PRIMARY KEY(id),
 	FOREIGN KEY (claimid) REFERENCES Claims(id)
 );
+
+CREATE TABLE Imaging_Studies_Encounter(
+	imagingid	CHAR(36) NOT NULL, 
+	encounter	CHAR(36) NOT NULL,
+	procedure	BIGINT NOT NULL
+	PRIMARY KEY(imagingid, encounter, procedure)
+	FOREIGN KEY (appointmentid) REFERENCES Encounters(id),
+	FOREIGN KEY (procedure) REFERENCES Procedure(code),
+	FOREIGN KEY (imagingid) REFERENCES Imaging_Studies(id),
+);
+
+
+CREATE TABLE Imaging_Studies(
+	id	CHAR(36), 
+	date DATE NOT NULL,
+	series_uid	VARCHAR(50) NOT NULL,
+	bodysite_code	INT NOT NULL,
+	bodysite_description VARCHAR(100) NOT NULL,
+	modality_code	CHAR(2) NOT NULL,
+	modality_description VARCHAR(50) NOT NULL,
+	instance_uid VARCHAR(50) NOT NULL,
+	sop_code VARCHAR(50) NOT NULL,	
+	sop_description	VARCHAR(100) NOT NULL,	
+	PRIMARY KEY (id)
+);
+
 
