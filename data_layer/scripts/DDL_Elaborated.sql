@@ -3,6 +3,7 @@ CREATE TABLE Conditions(
 	description VARCHAR(100) NOT NULL,
 	PRIMARY KEY (code)
 );
+
 CREATE TABLE Races
 (
     id int NOT NULL AUTO_INCREMENT,
@@ -304,117 +305,102 @@ CREATE TABLE Encounters(
 );
 
 CREATE TABLE Medications_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	medication INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	reason BIGINT NOT NULL,
 	dispenses	INT NOT NULL,
-	start DATE NOT NULL,
-	stop DATE,	
-	PRIMARY KEY (id),
-	FOREIGN KEY (medication) REFERENCES Medications(code),
-	FOREIGN KEY (encounter) REFERENCES Encounters(id),
-	FOREIGN KEY (reason) REFERENCES Conditions(code)
-);
-
-CREATE TABLE Medications_Payer(
-	id int NOT NULL AUTO_INCREMENT,
 	medication_encounter INT NOT NULL,
 	payer	CHAR(36) NOT NULL,
 	payer_coverage	DECIMAL(10, 2) NOT NULL,
-	PRIMARY KEY (id),
+	start DATE NOT NULL,
+	stop DATE,	
+	PRIMARY KEY (medication, encounter,reason,payer),
+	FOREIGN KEY (medication) REFERENCES Medications(code),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id),
 	FOREIGN KEY (payer) REFERENCES Payers(id),
-	FOREIGN KEY (medication_encounter) REFERENCES Medications_Encounter(id)
+	FOREIGN KEY (reason) REFERENCES Conditions(code)
 );
 
 CREATE TABLE Procedures_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	`procedure` BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	start DATE NOT NULL,
 	stop DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (`procedure`, encounter),
 	FOREIGN KEY (`procedure`) REFERENCES Procedures(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Observations_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	observation  VARCHAR(50) NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	`date` DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (observation, encounter),
 	FOREIGN KEY (observation) REFERENCES Observations(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Careplans_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	careplan  BIGINT NOT NULL,
 	reason BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	start DATE NOT NULL,
 	stop DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (careplan,reason, encounter),
 	FOREIGN KEY (careplan) REFERENCES Careplans(code),
 	FOREIGN KEY (reason) REFERENCES Conditions(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Supplies_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	supply  INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	`date` DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (supply,encounter),
 	FOREIGN KEY (supply) REFERENCES Supplies(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Immunizations_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	immunization  INT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	`date` DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (immunization,encounter),
 	FOREIGN KEY (immunization) REFERENCES Immunizations(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Devices_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	device  VARCHAR(100) NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	start DATE NOT NULL,
 	stop DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (device, encounter),
 	FOREIGN KEY (device) REFERENCES Devices(id),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Conditions_Encounter(
-	id int NOT NULL AUTO_INCREMENT,
 	`condition` BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
 	start DATE NOT NULL,
 	stop DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (`condition`,encounter),
 	FOREIGN KEY (`condition`) REFERENCES Conditions(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id)
 );
 
 CREATE TABLE Patients_Allergies(
-    id int NOT NULL AUTO_INCREMENT,
 	allergy BIGINT NOT NULL,
 	encounter CHAR(36) NOT NULL,
-	severity VARCHAR(50) NOT NULL,
 	reaction BIGINT not null,
+	severity VARCHAR(50) NOT NULL,
 	start DATE NOT NULL,
 	stop DATE,	
-	PRIMARY KEY (id),
+	PRIMARY KEY (allergy, encounter, reaction),
 	FOREIGN KEY (allergy) REFERENCES Allergies(code),
 	FOREIGN KEY (encounter) REFERENCES Encounters(id),
-	FOREIGN KEY (reactionId) REFERENCES Conditions(code),
+	FOREIGN KEY (reaction) REFERENCES Conditions(code)
 );
 
 CREATE TABLE Claims(
@@ -440,19 +426,17 @@ CREATE TABLE Claims(
 );
 
 CREATE TABLE Patient_Insurance(
-	id INT NOT NULL AUTO_INCREMENT,
 	claim CHAR(36) NOT NULL,
 	insurance CHAR(36) NOT NULL,
-	PRIMARY KEY(id),
+	PRIMARY KEY(claim,insurance),
 	FOREIGN KEY (claim) REFERENCES Claims(id),
 	FOREIGN KEY (insurance) REFERENCES Payers(id)
 );
 
 CREATE TABLE Diagnosis(
-    id INT NOT NULL AUTO_INCREMENT,
 	claim CHAR(36) NOT NULL,
 	reason BIGINT NOT NULL,
-	PRIMARY KEY(id),
+	PRIMARY KEY(claim,reason),
 	FOREIGN KEY (claim) REFERENCES Claims(id),
 	FOREIGN KEY (reason) REFERENCES Conditions(code)
 );
@@ -491,20 +475,9 @@ CREATE TABLE Claims_Transaction(
 	FOREIGN KEY (claimid) REFERENCES Claims(id)
 );
 
-CREATE TABLE Imaging_Studies_Encounter(
-	imagingid	CHAR(36) NOT NULL, 
-	encounter	CHAR(36) NOT NULL,
-	procedure	BIGINT NOT NULL
-	PRIMARY KEY(imagingid, encounter, procedure)
-	FOREIGN KEY (appointmentid) REFERENCES Encounters(id),
-	FOREIGN KEY (procedure) REFERENCES Procedure(code),
-	FOREIGN KEY (imagingid) REFERENCES Imaging_Studies(id),
-);
-
-
 CREATE TABLE Imaging_Studies(
 	id	CHAR(36), 
-	date DATE NOT NULL,
+	`date` DATE NOT NULL,
 	series_uid	VARCHAR(50) NOT NULL,
 	bodysite_code	INT NOT NULL,
 	bodysite_description VARCHAR(100) NOT NULL,
@@ -515,5 +488,18 @@ CREATE TABLE Imaging_Studies(
 	sop_description	VARCHAR(100) NOT NULL,	
 	PRIMARY KEY (id)
 );
+
+
+CREATE TABLE Imaging_Studies_Encounter(
+	`image`	CHAR(36) NOT NULL, 
+	encounter	CHAR(36) NOT NULL,
+	`procedure`	BIGINT NOT NULL,
+	PRIMARY KEY(`image`, encounter, `procedure`),
+	FOREIGN KEY (encounter) REFERENCES Encounters(id),
+	FOREIGN KEY (`procedure`) REFERENCES Procedures(code),
+	FOREIGN KEY (`image`) REFERENCES Imaging_Studies(id)
+);
+
+
 
 
