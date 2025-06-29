@@ -173,6 +173,7 @@ CREATE TABLE Allergies ( -- possibile problema nei dati manca l'id come guid
 	description	VARCHAR(100) NOT NULL,
 	type INT NOT NULL,
 	category INT NOT NULL,
+	severity VARCHAR(20) NOT NULL,
 	PRIMARY KEY (code),
 	FOREIGN KEY (category) REFERENCES Categories_allergy(id),
 	FOREIGN KEY (type) REFERENCES Types_allergy(id)

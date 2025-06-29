@@ -545,8 +545,6 @@ GROUP BY o.id, o.name, address, c.id, zip, lat, lon, phone, revenue, utilization
 
 
 -- ETL PROVIDERS
-select count(*)
-from BigData.providers p
 
 CREATE TEMPORARY TABLE providers_not_cleaned AS
 SELECT * FROM BigData.providers ;
@@ -557,8 +555,6 @@ SELECT speciality
 FROM providers_not_cleaned
 GROUP BY speciality
 
-
---5056
 
 INSERT INTO BigData_CleanedData.Providers
 (id, organization, first_name, last_name, gender, speciality, address, city, zip_code, lat, lon, utilization)
@@ -571,4 +567,248 @@ LEFT JOIN temp_city_abbreviations t
 INNER JOIN BigData_CleanedData.Cities c 
 	ON c.Name =  p.city or  c.Name  = t.full_name
 GROUP BY p.id, p.organization,first_name,last_name, gender, s.id,address, c.id, zip, lat, lon, utilization 
+
+
+-- ETL Encounters
+CREATE TEMPORARY TABLE encounters_not_cleaned AS
+SELECT * FROM BigData.Encounters ;
+
+INSERT INTO BigData_CleanedData.Classes_encounter (name)
+SELECT e.encounterclass
+FROM encounters_not_cleaned e 
+GROUP BY e.encounterclass
+
+SELECT *
+FROM encounters_not_cleaned
+
+SELECT code
+FROM (
+SELECT code, description, base_encounter_cost
+FROM encounters_not_cleaned
+GROUP BY code, description, base_encounter_cost
+) l
+GROUP BY code 
+HAVING COUNT(*)>1
+
+SELECT code, description, base_encounter_cost
+FROM encounters_not_cleaned
+WHERE code in ('390906007', '185345009', '185347001', '308335008', '50849002', '185349003')
+GROUP BY code, description, base_encounter_cost
+order by code
+
+
+CREATE TEMPORARY TABLE rename_type_encounter (
+    code int,
+    description VARCHAR(100)
+);
+
+INSERT INTO rename_type_encounter (code, description) VALUES
+('50849002', 'Emergency Room Admission'),
+('185345009', 'Encounter for symptom'),
+('185347001', 'Encounter for problem'),
+('185349003', 'Encounter for check up'),
+('308335008', 'Patient encounter procedure'),
+('390906007', 'Follow-up encounter');
+
+INSERT INTO BigData_CleanedData.Types_encounter (code, description, base_encounter_cost)
+SELECT e.code, IFNULL(r.description, e.description) description, base_encounter_cost
+FROM encounters_not_cleaned e
+LEFT JOIN rename_type_encounter r
+	ON r.code = e.code
+GROUP BY code, description, base_encounter_cost
+
+
+INSERT INTO BigData_CleanedData.Payers
+(id, name, address, city, state_headquartered, zip_code, phone, amount_covered, amount_uncovered, revenue, covered_encounters, uncovered_encounters, covered_medications, uncovered_medications, covered_procedures, uncovered_procedures, covered_immunizations, uncovered_immunizations, unique_customers, qols_avg, member_months)
+SELECT id, name, address, city, state_headquartered, zip as zip_code, phone, amount_covered, amount_uncovered, revenue, covered_encounters, uncovered_encounters, covered_medications, uncovered_medications, covered_procedures, uncovered_procedures, covered_immunizations, uncovered_immunizations, unique_customers, qols_avg, member_months
+FROM BigData.payers;
+
+INSERT INTO BigData_CleanedData.Encounters
+(id, patient, organization, provider, payer, encounterclass, typeencounter, total_claim_cost, payer_coverage, `start`, stop)
+SELECT e.id, patient, organization, provider, payer, c.id as encounterclass, code, total_claim_cost, payer_coverage, `start`, stop
+FROM encounters_not_cleaned e
+INNER JOIN BigData_CleanedData.Classes_encounter c
+	ON c.name = e.encounterclass;
+
+DROP TABLE encounters_not_cleaned;
+-- ETL Immunization
+
+CREATE TEMPORARY TABLE immunizations_not_cleaned AS
+SELECT *
+FROM BigData.immunizations i 
+
+INSERT INTO BigData_CleanedData.Immunizations
+(code, description, base_cost)
+SELECT code, description, base_cost
+FROM immunizations_not_cleaned
+GROUP BY code, description, base_cost;
+
+
+
+
+INSERT INTO BigData_CleanedData.Immunizations_Encounter
+(immunization, encounter, `date`)
+SELECT code, encounter, `date`
+FROM immunizations_not_cleaned
+GROUP BY code, encounter, `date`;
+
+
+-- ETL Coditions
+CREATE TEMPORARY TABLE conditions_not_cleaned AS
+SELECT *
+FROM BigData.conditions c
+
+SELECT code
+FROM 
+(
+SELECT code, description
+FROM conditions_not_cleaned c
+GROUP BY code, description
+) c1
+GROUP BY code 
+HAVING COUNT(*) > 1
+
+SELECT code, description
+FROM conditions_not_cleaned c
+WHERE c.code in ('233604007', '84757009')
+GROUP BY code, description
+
+
+CREATE TEMPORARY TABLE rename_conditions (
+    code int,
+    description VARCHAR(100)
+);
+
+INSERT INTO rename_conditions (code, description) VALUES
+('233604007', 'Emergency Room Admission'),
+('84757009', 'Pneumonia');
+
+
+INSERT INTO BigData_CleanedData.Conditions (code, description)
+SELECT c.code, IFNULL(r.description, c.description) description
+FROM conditions_not_cleaned c
+LEFT JOIN rename_conditions r 
+	ON r.code = c.code
+GROUP BY code, description
+
+INSERT INTO BigData_CleanedData.Conditions_Encounter (`condition`, encounter, `start`, stop)
+SELECT code, encounter, `start`, stop
+FROM conditions_not_cleaned
+GROUP BY code, encounter, `start`, stop
+
+
+-- ETL Allergies
+-- 794
+CREATE TEMPORARY TABLE allergies_not_cleaned AS
+SELECT *
+FROM BigData.allergies c
+
+
+INSERT INTO BigData_CleanedData.Categories_allergy (name)
+SELECT category
+FROM allergies_not_cleaned
+GROUP BY category 
+
+INSERT INTO BigData_CleanedData.Types_allergy (name)
+SELECT  `type`
+FROM allergies_not_cleaned
+GROUP BY `type`
+
+
+
+
+INSERT INTO BigData_CleanedData.Allergies
+(code, `system`, description, `type`, category)
+SELECT code, `system`, description, ta.id, ca.id
+FROM allergies_not_cleaned a
+INNER JOIN BigData_CleanedData.Types_allergy ta
+	ON a.`type` = ta.name
+INNER JOIN BigData_CleanedData.Categories_allergy ca
+	ON a.category = ca.name
+GROUP BY code, `system`, description, ta.id, ca.id
+
+
+-- Inserito campo condizione 0 "Reaction to allergy is unknown"
+
+INSERT INTO BigData_CleanedData.Conditions
+(code, description)
+VALUES(0, 'Reaction to allergy is unknown');
+
+
+
+INSERT INTO BigData_CleanedData.Conditions (code, description)
+SELECT reaction1, description1 
+FROM allergies a 
+WHERE a.reaction1  is not null and a.reaction1 not in(
+select c.code
+from BigData_CleanedData.Conditions c 
+)
+group by reaction1, description1 
+
+INSERT INTO BigData_CleanedData.Conditions (code, description)
+SELECT reaction2, description2
+FROM allergies a 
+WHERE a.reaction2  is not null and a.reaction2 not in(
+select c.code
+from BigData_CleanedData.Conditions c 
+)
+group by reaction2, description2
+
+
+INSERT INTO BigData_CleanedData.Patients_Allergies
+(allergy, encounter, reaction, severity, `start`, stop)
+SELECT code, encounter, reaction1 AS reaction ,IFNULL(NULLIF(severity1, ''), 'UNKNOWN') as severity, `start`, stop
+FROM BigData.allergies 
+WHERE reaction1 IS NOT NULL
+UNION 
+SELECT code, encounter, reaction2 AS reaction ,IFNULL(NULLIF(severity2, ''), 'UNKNOWN') as severity, `start`, stop
+FROM BigData.allergies c
+WHERE reaction2 IS NOT NULL
+UNION 
+SELECT code, encounter, 0 AS reaction ,'UNKNOWN' as severity, `start`, stop
+FROM BigData.allergies c
+WHERE reaction2 IS NULL AND reaction1 IS  NULL
+
+
+-- ETL Careplans
+CREATE TEMPORARY TABLE careplans_not_cleaned AS
+SELECT *
+FROM BigData.careplans c
+
+SELECT code
+FROM (
+SELECT code, description, count(*)
+FROM careplans_not_cleaned
+where code = 734163000
+GROUP BY code, description
+) c
+group by c.code
+having count(*) > 1
+
+INSERT INTO BigData_CleanedData.Careplans (code, description)
+SELECT code, description
+FROM careplans_not_cleaned
+WHERE code != 734163000
+GROUP BY code, description 
+
+INSERT INTO BigData_CleanedData.Careplans (code, description)
+VALUES (734163000, 'Care Plan')
+
+
+INSERT INTO BigData_CleanedData.Conditions (code, description)
+SELECT reasoncode, description
+FROM careplans_not_cleaned  
+WHERE reasoncode is not null and reasoncode not in(
+select c.code
+from BigData_CleanedData.Conditions c 
+)
+group by reasoncode, description 
+
+INSERT INTO BigData_CleanedData.Careplans_Encounter (careplan, reason, encounter, `start`, stop)
+SELECT code, reasoncode, encounter, `start`, stop
+FROM careplans_not_cleaned
+WHERE reasoncode is not null
+GROUP BY code, reasoncode, encounter, `start`, stop
+
+
 
